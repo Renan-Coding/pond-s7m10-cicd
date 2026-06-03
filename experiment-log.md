@@ -14,8 +14,8 @@
 | 8 | 26891585287 | d52df13 | cache pip religado | ✅ | 39s | 1ª run = cache miss (lento ainda) | test 21→19s (−2s) e lint 7→8s; total subiu 37→39s mesmo com cache; cache pip ~negligível confirmado |
 | 9 | 26891782877 | 667228b | jobs lint e test em paralelo | ✅ | 24s | total ≈ max(lint, test) | confirmado: total 39→24s (−15s = −38%); lint 8s + test 18s paralelos; ganho > do que qualquer cache |
 | 10 | 26891901602 | d455ce7 | lint falhando (import não usado) | ❌ | 23s | lint falha rápido | lint 10s ❌ (F401), test 18s ✅ paralelo; workflow ❌; em modo sequencial test nem teria iniciado |
-| 11 |  |  | dependência pesada (pandas+numpy) | ⬜ |  | cache miss + download = install lento | |
-| 12 |  |  | re-run sem mudança (workflow_dispatch) | ⬜ |  | tempo diferente da 11 (variabilidade) | |
+| 11 | 26892051006 | 84c53aa | dependência pesada (pandas+numpy) | ✅ | 47s | cache miss + download = install lento | confirmado: test 18→41s (+23s); contraponto direto à Run 7 — cache importa qdo deps são grandes |
+| 12 | 26892220586 | 84c53aa | re-run sem mudança (workflow_dispatch) | ✅ | 42s | tempo diferente da 11 (variabilidade) | mesmo commit; total 47→42s (−5s); test 41→33s (−8s) = cache pip hit em stack pesada; jitter contribuiu restante |
 
 ## Variações detalhadas
 
@@ -81,15 +81,15 @@ Observação: confirmado integralmente. Lint quebrou em 10s (F401 `os` imported 
 
 ### Run 11 — Dependência pesada
 Mudança: reverter import inútil; adicionar `pandas==2.2.2` e `numpy==2.1.0` em `requirements.txt`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26892051006
 Hipótese: cache miss (hash mudou) + download dessas libs = install ~30-60s.
-Observação:
+Observação: confirmado dentro do range. Test pulou de 18s → 41s (+23s); pandas+numpy somam ~80MB de wheels + dependências transitivas (tzdata, python-dateutil etc). Lint subiu 8→12s — o hash de `requirements.txt` mudou e como `cache-dependency-path` lista ambos os arquivos, o cache do lint também foi invalidado (mesmo o lint não usando `requirements.txt`). Detalhe operacional importante: granularidade do cache-key. **Contraponto direto à Run 7**: lá, sem cache, install custou +2s; aqui, com cache miss, custou +23s. A utilidade do cache pip é proporcional ao tamanho da árvore de dependências. Stack leve → cache não importa; stack pesada (ML, data science) → cache é crítico.
 
 ### Run 12 — Re-run via workflow_dispatch
-Mudança: nenhuma — disparo manual.
-Link da run:
+Mudança: nenhuma — disparo manual sobre o mesmo commit `84c53aa` da Run 11.
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26892220586
 Hipótese: tempo diferente da run 11 mesmo com cache hit total — variabilidade do runner GitHub. **Resultado inesperado para o relatório**.
-Observação:
+Observação: confirmado em parte, mas com revelação adicional valiosa. Total caiu 47s → 42s (−5s, −11%). Test caiu 41s → 33s (−8s, −20%). Como o código é idêntico, a diferença vem de DUAS fontes combinadas: (1) cache pip agora HIT — os wheels de pandas/numpy foram armazenados no cache da Run 11 e reaproveitados; (2) jitter normal do runner GitHub (~2s envelope visto em runs anteriores). Decomposição estimada: ~5-6s de ganho de cache + ~2-3s de jitter. **Comparação cruzada definitiva**: Run 7 vs Run 6 (deps leves, cache off vs on) = +2s sem cache; Run 11 vs Run 12 (deps pesadas, cache miss vs hit) = +8s sem cache. Validação direta de que utilidade do cache pip é função do tamanho da árvore de dependências, não uma constante.
 
 ## Hipótese × observação
 
