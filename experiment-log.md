@@ -4,7 +4,7 @@
 
 | # | run_id | commit_sha | descrição | status | duração total | hipótese | observação |
 |---|--------|-----------|-----------|--------|---------------|----------|------------|
-| 1 |  |  | baseline (7 testes, cache on, sequencial) | ⬜ |  | rápido, ~1-2min, install dominante | |
+| 1 | 26889692930 | c16deeb | baseline (7 testes, cache on, sequencial) | ✅ | 33s | rápido, ~1-2min, install dominante | passou rápido (lint 10s + test 15s); install foi mais rápido que esperado mesmo na 1ª run |
 | 2 |  |  | teste falhando (status_code errado) | ⬜ |  | lint passa, test falha | |
 | 3 |  |  | fix do teste anterior | ⬜ |  | volta verde, install rápido (cache hit) | |
 | 4 |  |  | +20 testes parametrizados | ⬜ |  | test_count ~27, job test +alguns seg | |
@@ -21,9 +21,9 @@
 
 ### Run 1 — Baseline
 Configuração inicial: 7 testes pytest, cache pip ligado, jobs sequenciais (`test` precisa de `lint`).
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26889692930
 Hipótese: pipeline verde, ~1-2 minutos, etapa "Install dependencies" dominante por ser primeiro run (cache miss).
-Observação:
+Observação: duração total 33s (lint 10s, test 15s, ~8s overhead de setup/checkout). Mais rápido que o estimado — install não foi o gargalo mesmo sem cache prévio, provavelmente porque o pool de wheels do PyPI + bandwidth do runner GitHub é alto. Artifact `test-report-26889692930.zip` (386B) gerado. 7 testes passaram.
 
 ### Run 2 — Teste falhando
 Mudança: `tests/test_tasks.py` — `test_create` espera status 200 (era 201).
