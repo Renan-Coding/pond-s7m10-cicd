@@ -1,0 +1,14 @@
+run_number,run_id,commit_sha,commit_message,status,workflow_duration,lint_duration,test_duration,test_count,test_failures,test_time_seconds,test_avg_seconds,timestamp,event
+1,26889692930,c16deeb,"exp: run 1 baseline 7 testes, cache, sequencial",success,33.0,10.0,15.0,7,0,0.087,0.0124,2026-06-03T13:58:44Z,push
+2,26890173516,4e759e3,"exp: run 02 teste falhando, status code errado",failure,29.0,8.0,14.0,7,1,0.127,0.0181,2026-06-03T14:06:47Z,push
+3,26890350804,4f61d57,exp: run 03 fix do teste anterior,success,35.0,13.0,12.0,7,0,0.09,0.0129,2026-06-03T14:09:52Z,push
+4,26890470856,105e85f,"exp: run 04, 20 testes parametrizados",success,37.0,13.0,16.0,27,0,0.249,0.0092,2026-06-03T14:11:53Z,push
+5,26890700597,2a3598b,exp: run 05 - +100 testes,success,33.0,8.0,16.0,107,0,0.698,0.0065,2026-06-03T14:15:45Z,push
+6,26890917608,ae3b503,exp: run 06 - teste lento,success,35.0,7.0,19.0,108,0,5.691,0.0527,2026-06-03T14:19:22Z,push
+7,26891429817,b5a78d8,exp: run 07 - cache pip desligado,success,37.0,7.0,21.0,108,0,5.743,0.0532,2026-06-03T14:27:50Z,push
+8,26891585287,d52df13,exp: run 08 - cache pip religado,success,39.0,8.0,19.0,108,0,5.818,0.0539,2026-06-03T14:30:25Z,push
+9,26891782877,667228b,exp: run 09 - jobs lint e test em paralelo,success,24.0,8.0,18.0,108,0,5.78,0.0535,2026-06-03T14:33:42Z,push
+10,26891901602,d455ce7,exp: run 10 - lint falhando (import nao usado),failure,23.0,10.0,18.0,108,0,5.776,0.0535,2026-06-03T14:35:39Z,push
+11,26892051006,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,47.0,12.0,41.0,108,0,6.361,0.0589,2026-06-03T14:38:09Z,push
+12,26892220586,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,42.0,9.0,33.0,108,0,5.863,0.0543,2026-06-03T14:40:52Z,workflow_dispatch
+13,26892378254,1885d86,exp: atualiza log com resultados das 12 runs,success,33.0,12.0,27.0,108,0,5.765,0.0534,2026-06-03T14:43:29Z,push

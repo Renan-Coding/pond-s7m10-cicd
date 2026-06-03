@@ -1,0 +1,27 @@
+run_id,commit_sha,commit_message,status,workflow_duration,job_name,job_duration,test_count,test_failures,timestamp
+26889692930,c16deeb,"exp: run 1 baseline 7 testes, cache, sequencial",success,33.0,lint,10.0,7,0,2026-06-03T13:58:44Z
+26889692930,c16deeb,"exp: run 1 baseline 7 testes, cache, sequencial",success,33.0,test,15.0,7,0,2026-06-03T13:58:44Z
+26890173516,4e759e3,"exp: run 02 teste falhando, status code errado",failure,29.0,lint,8.0,7,1,2026-06-03T14:06:47Z
+26890173516,4e759e3,"exp: run 02 teste falhando, status code errado",failure,29.0,test,14.0,7,1,2026-06-03T14:06:47Z
+26890350804,4f61d57,exp: run 03 fix do teste anterior,success,35.0,lint,13.0,7,0,2026-06-03T14:09:52Z
+26890350804,4f61d57,exp: run 03 fix do teste anterior,success,35.0,test,12.0,7,0,2026-06-03T14:09:52Z
+26890470856,105e85f,"exp: run 04, 20 testes parametrizados",success,37.0,lint,13.0,27,0,2026-06-03T14:11:53Z
+26890470856,105e85f,"exp: run 04, 20 testes parametrizados",success,37.0,test,16.0,27,0,2026-06-03T14:11:53Z
+26890700597,2a3598b,exp: run 05 - +100 testes,success,33.0,lint,8.0,107,0,2026-06-03T14:15:45Z
+26890700597,2a3598b,exp: run 05 - +100 testes,success,33.0,test,16.0,107,0,2026-06-03T14:15:45Z
+26890917608,ae3b503,exp: run 06 - teste lento,success,35.0,lint,7.0,108,0,2026-06-03T14:19:22Z
+26890917608,ae3b503,exp: run 06 - teste lento,success,35.0,test,19.0,108,0,2026-06-03T14:19:22Z
+26891429817,b5a78d8,exp: run 07 - cache pip desligado,success,37.0,lint,7.0,108,0,2026-06-03T14:27:50Z
+26891429817,b5a78d8,exp: run 07 - cache pip desligado,success,37.0,test,21.0,108,0,2026-06-03T14:27:50Z
+26891585287,d52df13,exp: run 08 - cache pip religado,success,39.0,lint,8.0,108,0,2026-06-03T14:30:25Z
+26891585287,d52df13,exp: run 08 - cache pip religado,success,39.0,test,19.0,108,0,2026-06-03T14:30:25Z
+26891782877,667228b,exp: run 09 - jobs lint e test em paralelo,success,24.0,lint,8.0,108,0,2026-06-03T14:33:42Z
+26891782877,667228b,exp: run 09 - jobs lint e test em paralelo,success,24.0,test,18.0,108,0,2026-06-03T14:33:42Z
+26891901602,d455ce7,exp: run 10 - lint falhando (import nao usado),failure,23.0,lint,10.0,108,0,2026-06-03T14:35:39Z
+26891901602,d455ce7,exp: run 10 - lint falhando (import nao usado),failure,23.0,test,18.0,108,0,2026-06-03T14:35:39Z
+26892051006,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,47.0,test,41.0,108,0,2026-06-03T14:38:09Z
+26892051006,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,47.0,lint,12.0,108,0,2026-06-03T14:38:09Z
+26892220586,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,42.0,test,33.0,108,0,2026-06-03T14:40:52Z
+26892220586,84c53aa,exp: run 11 - dependencia pesada (pandas+numpy),success,42.0,lint,9.0,108,0,2026-06-03T14:40:52Z
+26892378254,1885d86,exp: atualiza log com resultados das 12 runs,success,33.0,test,27.0,108,0,2026-06-03T14:43:29Z
+26892378254,1885d86,exp: atualiza log com resultados das 12 runs,success,33.0,lint,12.0,108,0,2026-06-03T14:43:29Z
