@@ -11,7 +11,7 @@
 | 5 | 26890700597 | 2a3598b | +100 testes | ✅ | 33s | test_count ~107, job test sobe mais | ⚠️ INESPERADO: test=16s, IGUAL à Run 4. Não escalou linear (esperado ~32s); overhead fixo do pytest domina, 100 POSTs em SQLite :memory: somam <1s |
 | 6 | 26890917608 | ae3b503 | teste lento (sleep 5s) | ✅ | 35s | job test +5s | test 16→19s = +3s (não +5s); runner jitter ~2s absorveu parte; sleep escala linear como esperado |
 | 7 | 26891429817 | b5a78d8 | cache pip desligado | ✅ | 37s | install dispara em ambos jobs | ⚠️ INESPERADO: test +2s só (19→21s), lint igual. Cache pip ~irrelevante p/ deps pequenas no runner GitHub |
-| 8 |  |  | cache pip religado | ⬜ |  | 1ª run = cache miss (lento ainda) | |
+| 8 | 26891585287 | d52df13 | cache pip religado | ✅ | 39s | 1ª run = cache miss (lento ainda) | test 21→19s (−2s) e lint 7→8s; total subiu 37→39s mesmo com cache; cache pip ~negligível confirmado |
 | 9 |  |  | jobs lint e test em paralelo | ⬜ |  | total ≈ max(lint, test) | |
 | 10 |  |  | lint falhando (import não usado) | ⬜ |  | lint falha rápido | |
 | 11 |  |  | dependência pesada (pandas+numpy) | ⬜ |  | cache miss + download = install lento | |
@@ -63,9 +63,9 @@ Observação: ⚠️ **RESULTADO INESPERADO**. Job test 19s → 21s (+2s); lint 
 
 ### Run 8 — Cache religado
 Mudança: restaurar `cache: 'pip'` + `cache-dependency-path`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26891585287
 Hipótese: cache miss na 1ª run (GitHub recria entrada após gap). Pode parecer tão lento quanto a run 7. **Possível resultado inesperado**.
-Observação:
+Observação: cache miss não foi notável (test 21s → 19s, lint 7s → 8s — diferença <2s). Total 39s vs 37s da Run 7 — **com cache ligado o pipeline foi LIGEIRAMENTE MAIS LENTO**, dentro do envelope de variabilidade. Reforça a conclusão da Run 7: cache pip não traz ganho material nesta stack. Triplet Run 6 (cache ON, sem mudança) = 35s, Run 7 (cache OFF) = 37s, Run 8 (cache ON religado) = 39s — variação de 4s sem relação clara com o cache.
 
 ### Run 9 — Jobs em paralelo
 Mudança: remover `needs: lint` do job `test` em `ci.yml`.
