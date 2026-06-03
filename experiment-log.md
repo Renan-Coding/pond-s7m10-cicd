@@ -6,7 +6,7 @@
 |---|--------|-----------|-----------|--------|---------------|----------|------------|
 | 1 | 26889692930 | c16deeb | baseline (7 testes, cache on, sequencial) | ✅ | 33s | rápido, ~1-2min, install dominante | passou rápido (lint 10s + test 15s); install foi mais rápido que esperado mesmo na 1ª run |
 | 2 | 26890173516 | 4e759e3 | teste falhando (status_code errado) | ❌ | 29s | lint passa, test falha | confirmado: lint 8s ✅, test 14s ❌; artifact 641B (junit registrou falha) |
-| 3 |  |  | fix do teste anterior | ⬜ |  | volta verde, install rápido (cache hit) | |
+| 3 | 26890350804 | 4f61d57 | fix do teste anterior | ✅ | 35s | volta verde, install rápido (cache hit) | verde confirmado mas total +2s vs Run 1 — cache NÃO acelerou tanto; variabilidade do runner já visível |
 | 4 |  |  | +20 testes parametrizados | ⬜ |  | test_count ~27, job test +alguns seg | |
 | 5 |  |  | +100 testes | ⬜ |  | test_count ~107, job test sobe mais | |
 | 6 |  |  | teste lento (sleep 5s) | ⬜ |  | job test +5s | |
@@ -33,9 +33,9 @@ Observação: confirmado integralmente. Lint passou em 8s (mais rápido que Run 
 
 ### Run 3 — Fix
 Mudança: reverter `test_create` para status 201.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26890350804
 Hipótese: pipeline volta verde, install rápido (cache hit do hash idêntico ao da run 1).
-Observação:
+Observação: verde como esperado, mas duração 35s — MAIOR que Run 1 (33s) e Run 2 (29s). Lint 13s vs 8s (Run 2). Cache hit não trouxe ganho dramático — sugere que `pip install` no cenário com poucas deps já era barato, e a variação observada (~5-7s) reflete principalmente jitter do runner GitHub. Primeiro indício de variabilidade material entre execuções idênticas.
 
 ### Run 4 — +20 testes parametrizados
 Mudança: criar `tests/test_bulk.py` com 20 testes parametrizados de POST /tasks.
