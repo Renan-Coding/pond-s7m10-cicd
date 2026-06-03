@@ -12,7 +12,7 @@
 | 6 | 26890917608 | ae3b503 | teste lento (sleep 5s) | ✅ | 35s | job test +5s | test 16→19s = +3s (não +5s); runner jitter ~2s absorveu parte; sleep escala linear como esperado |
 | 7 | 26891429817 | b5a78d8 | cache pip desligado | ✅ | 37s | install dispara em ambos jobs | ⚠️ INESPERADO: test +2s só (19→21s), lint igual. Cache pip ~irrelevante p/ deps pequenas no runner GitHub |
 | 8 | 26891585287 | d52df13 | cache pip religado | ✅ | 39s | 1ª run = cache miss (lento ainda) | test 21→19s (−2s) e lint 7→8s; total subiu 37→39s mesmo com cache; cache pip ~negligível confirmado |
-| 9 |  |  | jobs lint e test em paralelo | ⬜ |  | total ≈ max(lint, test) | |
+| 9 | 26891782877 | 667228b | jobs lint e test em paralelo | ✅ | 24s | total ≈ max(lint, test) | confirmado: total 39→24s (−15s = −38%); lint 8s + test 18s paralelos; ganho > do que qualquer cache |
 | 10 |  |  | lint falhando (import não usado) | ⬜ |  | lint falha rápido | |
 | 11 |  |  | dependência pesada (pandas+numpy) | ⬜ |  | cache miss + download = install lento | |
 | 12 |  |  | re-run sem mudança (workflow_dispatch) | ⬜ |  | tempo diferente da 11 (variabilidade) | |
@@ -69,9 +69,9 @@ Observação: cache miss não foi notável (test 21s → 19s, lint 7s → 8s —
 
 ### Run 9 — Jobs em paralelo
 Mudança: remover `needs: lint` do job `test` em `ci.yml`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26891782877
 Hipótese: duração total ≈ max(lint, test) ao invés de lint+test.
-Observação:
+Observação: **confirmado com folga**. Total 39s (Run 8) → 24s (Run 9) = −15s (−38%). Lint (8s) e test (18s) rodaram simultaneamente; total ≈ max(jobs) + ~6s de overhead único de provisionamento. UI do GitHub mostra os 2 jobs empilhados sem seta entre eles (visual claro de execução paralela). **Achado mais forte do experimento até aqui**: paralelizar jobs sequenciais traz ganho muito maior (15s) que qualquer otimização de cache observada (≤2s). Custo: jobs paralelos consomem o dobro de minutos-runner, mas latência de feedback cai pela metade — tradeoff geralmente compensa.
 
 ### Run 10 — Lint falhando
 Mudança: adicionar `import os` não usado em `app/main.py`.
