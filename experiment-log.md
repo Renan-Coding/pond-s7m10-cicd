@@ -7,7 +7,7 @@
 | 1 | 26889692930 | c16deeb | baseline (7 testes, cache on, sequencial) | ✅ | 33s | rápido, ~1-2min, install dominante | passou rápido (lint 10s + test 15s); install foi mais rápido que esperado mesmo na 1ª run |
 | 2 | 26890173516 | 4e759e3 | teste falhando (status_code errado) | ❌ | 29s | lint passa, test falha | confirmado: lint 8s ✅, test 14s ❌; artifact 641B (junit registrou falha) |
 | 3 | 26890350804 | 4f61d57 | fix do teste anterior | ✅ | 35s | volta verde, install rápido (cache hit) | verde confirmado mas total +2s vs Run 1 — cache NÃO acelerou tanto; variabilidade do runner já visível |
-| 4 |  |  | +20 testes parametrizados | ⬜ |  | test_count ~27, job test +alguns seg | |
+| 4 | 26890470856 | 105e85f | +20 testes parametrizados | ✅ | 37s | test_count ~27, job test +alguns seg | test_count=27, job test 16s (+4s vs Run 3) ~200ms/teste, artifact 475B |
 | 5 |  |  | +100 testes | ⬜ |  | test_count ~107, job test sobe mais | |
 | 6 |  |  | teste lento (sleep 5s) | ⬜ |  | job test +5s | |
 | 7 |  |  | cache pip desligado | ⬜ |  | install dispara em ambos jobs | |
@@ -39,9 +39,9 @@ Observação: verde como esperado, mas duração 35s — MAIOR que Run 1 (33s) e
 
 ### Run 4 — +20 testes parametrizados
 Mudança: criar `tests/test_bulk.py` com 20 testes parametrizados de POST /tasks.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26890470856
 Hipótese: `test_count` sobe para ~27, duração do job test sobe alguns segundos.
-Observação:
+Observação: confirmado. `test_count` = 27. Job test 16s vs 12s da Run 3 → ~200ms por teste novo (POST + DB write + asserções). Artifact subiu para 475B (mais `<testcase>` no JUnit XML). Lint igual a Run 3 (13s) — espaço de busca do ruff cresceu pouco.
 
 ### Run 5 — +100 testes
 Mudança: `range(20)` → `range(100)` em `test_bulk.py`.
