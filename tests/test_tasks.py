@@ -1,6 +1,6 @@
 def test_create(client):
     response = client.post("/tasks", json={"title": "buy milk"})
-    assert response.status_code == 200  # RUN 02: intencionalmente errado (era 201)
+    assert response.status_code == 201
     assert response.json()["title"] == "buy milk"
 
 

@@ -5,7 +5,7 @@
 | # | run_id | commit_sha | descrição | status | duração total | hipótese | observação |
 |---|--------|-----------|-----------|--------|---------------|----------|------------|
 | 1 | 26889692930 | c16deeb | baseline (7 testes, cache on, sequencial) | ✅ | 33s | rápido, ~1-2min, install dominante | passou rápido (lint 10s + test 15s); install foi mais rápido que esperado mesmo na 1ª run |
-| 2 |  |  | teste falhando (status_code errado) | ⬜ |  | lint passa, test falha | |
+| 2 | 26890173516 | 4e759e3 | teste falhando (status_code errado) | ❌ | 29s | lint passa, test falha | confirmado: lint 8s ✅, test 14s ❌; artifact 641B (junit registrou falha) |
 | 3 |  |  | fix do teste anterior | ⬜ |  | volta verde, install rápido (cache hit) | |
 | 4 |  |  | +20 testes parametrizados | ⬜ |  | test_count ~27, job test +alguns seg | |
 | 5 |  |  | +100 testes | ⬜ |  | test_count ~107, job test sobe mais | |
@@ -27,9 +27,9 @@ Observação: duração total 33s (lint 10s, test 15s, ~8s overhead de setup/che
 
 ### Run 2 — Teste falhando
 Mudança: `tests/test_tasks.py` — `test_create` espera status 200 (era 201).
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26890173516
 Hipótese: job `lint` passa, job `test` falha, workflow vermelho. Artifact `report.xml` ainda é gerado (`if: always()`).
-Observação:
+Observação: confirmado integralmente. Lint passou em 8s (mais rápido que Run 1 — cache pip hit reduziu install). Test rodou 14s e falhou (`AssertionError: 201 != 200`). Artifact gerado mesmo com falha (641B vs 386B da Run 1 — tag `<failure>` adiciona bytes). Total 29s vs 33s da Run 1 — pequena melhora pelo cache.
 
 ### Run 3 — Fix
 Mudança: reverter `test_create` para status 201.
