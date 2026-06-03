@@ -10,7 +10,7 @@
 | 4 | 26890470856 | 105e85f | +20 testes parametrizados | ✅ | 37s | test_count ~27, job test +alguns seg | test_count=27, job test 16s (+4s vs Run 3) ~200ms/teste, artifact 475B |
 | 5 | 26890700597 | 2a3598b | +100 testes | ✅ | 33s | test_count ~107, job test sobe mais | ⚠️ INESPERADO: test=16s, IGUAL à Run 4. Não escalou linear (esperado ~32s); overhead fixo do pytest domina, 100 POSTs em SQLite :memory: somam <1s |
 | 6 | 26890917608 | ae3b503 | teste lento (sleep 5s) | ✅ | 35s | job test +5s | test 16→19s = +3s (não +5s); runner jitter ~2s absorveu parte; sleep escala linear como esperado |
-| 7 |  |  | cache pip desligado | ⬜ |  | install dispara em ambos jobs | |
+| 7 | 26891429817 | b5a78d8 | cache pip desligado | ✅ | 37s | install dispara em ambos jobs | ⚠️ INESPERADO: test +2s só (19→21s), lint igual. Cache pip ~irrelevante p/ deps pequenas no runner GitHub |
 | 8 |  |  | cache pip religado | ⬜ |  | 1ª run = cache miss (lento ainda) | |
 | 9 |  |  | jobs lint e test em paralelo | ⬜ |  | total ≈ max(lint, test) | |
 | 10 |  |  | lint falhando (import não usado) | ⬜ |  | lint falha rápido | |
@@ -57,9 +57,9 @@ Observação: confirmado direcionalmente. Job test 16s → 19s (+3s, não +5s es
 
 ### Run 7 — Cache desligado
 Mudança: remover `cache: 'pip'` + `cache-dependency-path` de ambos os jobs em `ci.yml`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26891429817
 Hipótese: passo "Install" dispara ~15-30s em cada job — pip baixa todos os wheels.
-Observação:
+Observação: ⚠️ **RESULTADO INESPERADO**. Job test 19s → 21s (+2s); lint manteve 7s. Diferença muito menor que o estimado (~15-30s). Deps deste projeto (`fastapi`, `sqlalchemy`, `pydantic`, `pytest`, `httpx`, `ruff`) totalizam ~30MB de wheels. Bandwidth do runner GitHub vs PyPI é muito alto (centenas de Mbps), então download desses pacotes leva poucos segundos. **Conclusão**: cache pip é uma otimização prematura para projetos com dependências leves; o ganho só compensa em stacks pesadas (PyTorch, pandas+numpy compiladas, etc). Material direto para resposta à pergunta "Houve diferença significativa entre execuções com e sem cache?".
 
 ### Run 8 — Cache religado
 Mudança: restaurar `cache: 'pip'` + `cache-dependency-path`.
