@@ -1,5 +1,3 @@
-import os  # RUN 10: import nao usado, ruff F401
-
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 

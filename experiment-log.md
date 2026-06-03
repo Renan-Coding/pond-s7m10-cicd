@@ -13,7 +13,7 @@
 | 7 | 26891429817 | b5a78d8 | cache pip desligado | ✅ | 37s | install dispara em ambos jobs | ⚠️ INESPERADO: test +2s só (19→21s), lint igual. Cache pip ~irrelevante p/ deps pequenas no runner GitHub |
 | 8 | 26891585287 | d52df13 | cache pip religado | ✅ | 39s | 1ª run = cache miss (lento ainda) | test 21→19s (−2s) e lint 7→8s; total subiu 37→39s mesmo com cache; cache pip ~negligível confirmado |
 | 9 | 26891782877 | 667228b | jobs lint e test em paralelo | ✅ | 24s | total ≈ max(lint, test) | confirmado: total 39→24s (−15s = −38%); lint 8s + test 18s paralelos; ganho > do que qualquer cache |
-| 10 |  |  | lint falhando (import não usado) | ⬜ |  | lint falha rápido | |
+| 10 | 26891901602 | d455ce7 | lint falhando (import não usado) | ❌ | 23s | lint falha rápido | lint 10s ❌ (F401), test 18s ✅ paralelo; workflow ❌; em modo sequencial test nem teria iniciado |
 | 11 |  |  | dependência pesada (pandas+numpy) | ⬜ |  | cache miss + download = install lento | |
 | 12 |  |  | re-run sem mudança (workflow_dispatch) | ⬜ |  | tempo diferente da 11 (variabilidade) | |
 
@@ -75,9 +75,9 @@ Observação: **confirmado com folga**. Total 39s (Run 8) → 24s (Run 9) = −1
 
 ### Run 10 — Lint falhando
 Mudança: adicionar `import os` não usado em `app/main.py`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26891901602
 Hipótese: ruff falha rápido (F401). Test ainda roda em paralelo — pode passar — mas workflow vermelho.
-Observação:
+Observação: confirmado integralmente. Lint quebrou em 10s (F401 `os` imported but unused, exit code 1). Test rodou em paralelo, passou em 18s. Workflow status = Failure por conta do lint, mas test gerou artifact normal (725B, sem `<failure>`). **Vantagem do paralelismo emergiu naturalmente aqui**: em modo sequencial (`needs: lint`), o test nem seria iniciado e o desenvolvedor só veria o erro do lint — em paralelo, ele recebe AMBAS as informações em uma rodada (lint quebrado + testes funcionando), economizando uma iteração de feedback.
 
 ### Run 11 — Dependência pesada
 Mudança: reverter import inútil; adicionar `pandas==2.2.2` e `numpy==2.1.0` em `requirements.txt`.
