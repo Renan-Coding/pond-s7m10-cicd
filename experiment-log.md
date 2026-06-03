@@ -8,7 +8,7 @@
 | 2 | 26890173516 | 4e759e3 | teste falhando (status_code errado) | ❌ | 29s | lint passa, test falha | confirmado: lint 8s ✅, test 14s ❌; artifact 641B (junit registrou falha) |
 | 3 | 26890350804 | 4f61d57 | fix do teste anterior | ✅ | 35s | volta verde, install rápido (cache hit) | verde confirmado mas total +2s vs Run 1 — cache NÃO acelerou tanto; variabilidade do runner já visível |
 | 4 | 26890470856 | 105e85f | +20 testes parametrizados | ✅ | 37s | test_count ~27, job test +alguns seg | test_count=27, job test 16s (+4s vs Run 3) ~200ms/teste, artifact 475B |
-| 5 |  |  | +100 testes | ⬜ |  | test_count ~107, job test sobe mais | |
+| 5 | 26890700597 | 2a3598b | +100 testes | ✅ | 33s | test_count ~107, job test sobe mais | ⚠️ INESPERADO: test=16s, IGUAL à Run 4. Não escalou linear (esperado ~32s); overhead fixo do pytest domina, 100 POSTs em SQLite :memory: somam <1s |
 | 6 |  |  | teste lento (sleep 5s) | ⬜ |  | job test +5s | |
 | 7 |  |  | cache pip desligado | ⬜ |  | install dispara em ambos jobs | |
 | 8 |  |  | cache pip religado | ⬜ |  | 1ª run = cache miss (lento ainda) | |
@@ -45,9 +45,9 @@ Observação: confirmado. `test_count` = 27. Job test 16s vs 12s da Run 3 → ~2
 
 ### Run 5 — +100 testes
 Mudança: `range(20)` → `range(100)` em `test_bulk.py`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26890700597
 Hipótese: `test_count` ~107, job test sobe mais — DB roundtrip por teste vira gargalo.
-Observação:
+Observação: ⚠️ **RESULTADO INESPERADO**. `test_count` = 107 (confirma), mas job test = 16s — **idêntico à Run 4 (27 testes)**. Esperava ~32s assumindo escala linear ~200ms/teste. Realidade: 100 POSTs em SQLite `:memory:` somam <1s; overhead fixo (`pytest` collection, import FastAPI, SQLAlchemy setup, TestClient warm-up) domina. A regressão linear "tempo × #testes" desabou. Artifact subiu de 475B → 714B — XML do JUnit cresceu com cada `<testcase>`, mas isso é negligível no tempo. Lição: para gargalo real de tempo, o número de testes só importa quando cada teste tem custo individual significativo (I/O, rede, sleep).
 
 ### Run 6 — Teste lento
 Mudança: adicionar `test_slow` com `time.sleep(5)` em `tests/test_tasks.py`.

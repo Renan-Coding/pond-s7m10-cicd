@@ -38,3 +38,9 @@ def test_delete(client):
     created = client.post("/tasks", json={"title": "rm"}).json()
     response = client.delete(f"/tasks/{created['id']}")
     assert response.status_code == 204
+
+
+def test_slow(client):
+    import time
+    time.sleep(5)
+    assert True
