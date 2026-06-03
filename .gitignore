@@ -1,0 +1,11 @@
+.env
+data/raw/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+report.xml
+tasks.db
+*.egg-info/
+.venv/
+.DS_Store
