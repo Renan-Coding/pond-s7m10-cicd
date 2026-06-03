@@ -9,7 +9,7 @@
 | 3 | 26890350804 | 4f61d57 | fix do teste anterior | ✅ | 35s | volta verde, install rápido (cache hit) | verde confirmado mas total +2s vs Run 1 — cache NÃO acelerou tanto; variabilidade do runner já visível |
 | 4 | 26890470856 | 105e85f | +20 testes parametrizados | ✅ | 37s | test_count ~27, job test +alguns seg | test_count=27, job test 16s (+4s vs Run 3) ~200ms/teste, artifact 475B |
 | 5 | 26890700597 | 2a3598b | +100 testes | ✅ | 33s | test_count ~107, job test sobe mais | ⚠️ INESPERADO: test=16s, IGUAL à Run 4. Não escalou linear (esperado ~32s); overhead fixo do pytest domina, 100 POSTs em SQLite :memory: somam <1s |
-| 6 |  |  | teste lento (sleep 5s) | ⬜ |  | job test +5s | |
+| 6 | 26890917608 | ae3b503 | teste lento (sleep 5s) | ✅ | 35s | job test +5s | test 16→19s = +3s (não +5s); runner jitter ~2s absorveu parte; sleep escala linear como esperado |
 | 7 |  |  | cache pip desligado | ⬜ |  | install dispara em ambos jobs | |
 | 8 |  |  | cache pip religado | ⬜ |  | 1ª run = cache miss (lento ainda) | |
 | 9 |  |  | jobs lint e test em paralelo | ⬜ |  | total ≈ max(lint, test) | |
@@ -51,9 +51,9 @@ Observação: ⚠️ **RESULTADO INESPERADO**. `test_count` = 107 (confirma), ma
 
 ### Run 6 — Teste lento
 Mudança: adicionar `test_slow` com `time.sleep(5)` em `tests/test_tasks.py`.
-Link da run:
+Link da run: https://github.com/Renan-coding/pond-s7m10-cicd/actions/runs/26890917608
 Hipótese: job test +5s lineares. Bom material para o cálculo de tempo médio.
-Observação:
+Observação: confirmado direcionalmente. Job test 16s → 19s (+3s, não +5s esperado). Diferença de ~2s vem do jitter do runner (visto também em Run 3 vs Run 1: ±2-5s sem mudança real). Importante: ao contrário da Run 5 (100 testes rápidos sem efeito mensurável), o `time.sleep(5)` SIM aparece — confirma que tempo de pipeline é dominado por operações que efetivamente bloqueiam, não pela contagem de testes.
 
 ### Run 7 — Cache desligado
 Mudança: remover `cache: 'pip'` + `cache-dependency-path` de ambos os jobs em `ci.yml`.
